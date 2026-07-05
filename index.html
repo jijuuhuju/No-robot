@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>reCAPTCHA 再現</title>
+    <meta charset="UTF-8"><title>reCAPTCHA 再現</title>
     <style>
-        body { font-family: Roboto, sans-serif; background: #f0f0f0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; user-select: none; }
+        body { font-family: sans-serif; background: #f0f0f0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; user-select: none; }
         .rc-anchor { background: #f9f9f9; border: 1px solid #d3d3d3; border-radius: 3px; box-shadow: 0 0 4px rgba(0,0,0,0.08); width: 302px; height: 76px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; box-sizing: border-box; position: relative; }
         .rc-anchor-content { display: flex; align-items: center; height: 100%; }
         .rc-inline-block { width: 28px; height: 28px; margin-right: 12px; position: relative; cursor: pointer; }
@@ -30,71 +29,44 @@
     </style>
 </head>
 <body>
-
 <div class="rc-anchor">
-    <div class="rc-anchor-content">
-        <div class="rc-inline-block" id="captchaBox">
-            <div class="rc-anchor-checkbox" id="checkboxBorder"></div>
-            <div class="rc-loading" id="loadingCircle"></div>
-            <div class="rc-checkmark" id="checkmark"></div>
-        </div>
-        <div class="rc-anchor-text">私はロボットではありません</div>
-    </div>
+    <div class="rc-anchor-content"><div class="rc-inline-block" id="box"><div class="rc-anchor-checkbox" id="bdr"></div><div class="rc-loading" id="lod"></div><div class="rc-checkmark" id="chk"></div></div><div class="rc-anchor-text">私はロボットではありません</div></div>
     <div class="rc-anchor-logo-portrait"><div class="rc-anchor-logo-img"></div>reCAPTCHA</div>
-
-    <div class="captcha-panel" id="captchaPanel">
-        <div class="captcha-header"><p id="taskDesc">の画像が写っているタイルをすべて選択してください</p><h3 id="targetTask">信号機</h3></div>
-        <div class="captcha-grid" id="captchaGrid"></div>
-        <div class="captcha-footer"><div class="footer-icons"><span id="reloadBtn">🔄</span><span id="audioBtn">🎧</span><span id="infoBtn">ℹ️</span></div><button class="verify-btn" id="verifyBtn">確認</button></div>
-    </div>
+    <div class="captcha-panel" id="pnl"><div class="captcha-header"><p id="dsc"></p><h3 id="tsk"></h3></div><div class="captcha-grid" id="grd"></div><div class="captcha-footer"><div class="footer-icons"><span id="rel">🔄</span><span id="aud">🎧</span><span id="inf">ℹ️</span></div><button class="verify-btn" id="btn">確認</button></div></div>
 </div>
-
 <script>
-    let step = 1, isRun = false;
+    let step = 1, run = false;
     const data = {
-        1: { t: "信号機", d: "の画像が写っているタイルをすべて選択してください", i: [{e:"🚦",c:true},{e:"🚗",c:false},{e:"🚶",c:false},{e:"🏠",c:false},{e:"🚦",c:true},{e:"🚏",c:false},{e:"🌳",c:false},{e:"🚦",c:true},{e:"🚲",c:false}] },
-        2: { t: "扇風機", d: "の画像が写っているタイルをすべて選択してください", i: [{e:"📺",c:false},{e:"🌪️",c:true},{e:"🛋️",c:false},{e:"🌪️",c:true},{e:"🪑",c:false},{e:"⏰",c:false},{e:"💻",c:false},{e:"💡",c:false},{e:"🌪️",c:true}] },
+        1: { t: "信号機", d: "の画像を選択", i: [{e:"🚦",c:true},{e:"🚗",c:false},{e:"🚶",c:false},{e:"🏠",c:false},{e:"🚦",c:true},{e:"🚏",c:false},{e:"🌳",c:false},{e:"🚦",c:true},{e:"🚲",c:false}] },
+        2: { t: "扇風機", d: "の画像を選択", i: [{e:"📺",c:false},{e:"🌪️",c:true},{e:"🛋️",c:false},{e:"🌪️",c:true},{e:"🪑",c:false},{e:"⏰",c:false},{e:"💻",c:false},{e:"💡",c:false},{e:"🌪️",c:true}] },
         3: { t: "信号機(激ムズ)", d: "端に1ミリだけかすっているタイルもすべて見つけてください", i: [{e:"🚗",c:false},{e:"🏠",c:false},{e:"🚦",c:true,p:"tr"},{e:"🌳",c:false},{e:"🔍",c:false},{e:"🚦",c:true,p:"r"},{e:"🚲",c:false},{e:"🚶",c:false},{e:"🚦",c:true,p:"b"}] }
     };
-    const box = document.getElementById('captchaBox'), border = document.getElementById('checkboxBorder'), load = document.getElementById('loadingCircle'), mark = document.getElementById('checkmark'), panel = document.getElementById('captchaPanel'), task = document.getElementById('targetTask'), desc = document.getElementById('taskDesc'), grid = document.getElementById('captchaGrid'), btn = document.getElementById('verifyBtn'), info = document.getElementById('infoBtn'), reload = document.getElementById('reloadBtn'), audio = document.getElementById('audioBtn');
-
-    function showGrid(s) {
-        grid.innerHTML = ""; task.textContent = data[s].t; desc.textContent = data[s].d;
+    const $ = id => document.getElementById(id);
+    function show(s) {
+        $("grd").innerHTML = ""; $("tsk").textContent = data[s].t; $("dsc").textContent = data[s].d;
         data[s].i.forEach(item => {
-            const div = document.createElement('div'); div.className = 'captcha-item'; div.setAttribute('data-c', item.c);
-            if(s===3 && item.c) {
+            const div = document.createElement('div'); div.className = 'captcha-item'; div.setAttribute('data-c', item.c); div.textContent = item.e;
+            if (s === 3 && item.c) {
                 div.style.fontSize = "16px";
-                if(item.p==="tr") { div.style.justifyContent = "flex-end"; div.style.alignItems = "flex-start"; }
-                if(item.p==="r") { div.style.justifyContent = "flex-end"; div.style.alignItems = "center"; }
-                if(item.p==="b") { div.style.justifyContent = "center"; div.style.alignItems = "flex-end"; }
+                if (item.p === "tr") { div.style.justifyContent = "flex-end"; div.style.alignItems = "flex-start"; }
+                if (item.p === "r") { div.style.justifyContent = "flex-end"; div.style.alignItems = "center"; }
+                if (item.p === "b") { div.style.justifyContent = "center"; div.style.alignItems = "flex-end"; }
             }
-            div.textContent = item.e; div.onclick = () => div.classList.toggle('selected'); grid.appendChild(div);
+            div.onclick = () => div.classList.toggle('selected'); $("grd").appendChild(div);
         });
     }
-    box.onclick = () => {
-        if (isRun || step > 3) return; isRun = true; border.style.display = 'none'; load.style.display = 'block';
-        setTimeout(() => { load.style.display = 'none'; border.style.display = 'block'; showGrid(step); panel.style.display = 'block'; isRun = false; }, 800);
-    };
-    reload.onclick = () => { alert("問題をリセットし、ステージ1に戻ります。"); step = 1; showGrid(1); };
-    audio.onclick = () => { alert("音声AIが故障中のため、ブラウザの音声機能を利用できません。タイルを選択してください。"); };
-    info.onclick = () => { alert("これはGoogleの悪意あるbotから守るプログラムの再現です、あなたがbotではないならタイルをクリックしてください"); };
-    btn.onclick = () => {
-        let ok = true;
-        document.querySelectorAll('.captcha-item').forEach(item => {
-            if (item.classList.contains('selected') !== (item.getAttribute('data-c') === 'true')) ok = false;
-        });
+    $("box").onclick = () => { if (run || step > 3) return; run = true; $("bdr").style.display = 'none'; $("lod").style.display = 'block'; setTimeout(() => { $("lod").style.display = 'none'; $("bdr").style.display = 'block'; show(step); $("pnl").style.display = 'block'; run = false; }, 800); };
+    $("rel").onclick = () => { alert("問題をリセットし、ステージ1に戻ります。"); step = 1; show(1); };
+    $("aud").onclick = () => { alert("音声AIが故障中のため、ブラウザの音声機能を利用できません。タイルを選択してください。"); };
+    $("inf").onclick = () => { alert("これはGoogleの悪意あるbotから守るプログラムの再現です、あなたがbotではないならタイルをクリックしてください"); };
+    $("btn").onclick = () => {
+        let ok = true; document.querySelectorAll('.captcha-item').forEach(item => { if (item.classList.contains('selected') !== (item.getAttribute('data-c') === 'true')) ok = false; });
         if (!ok) { alert("間違っています"); location.reload(); return; }
-        if (step < 3) { step++; showGrid(step); } 
-        else {
-            panel.style.display = 'none'; border.style.display = 'none'; load.style.display = 'block';
-            const wait = Math.floor(Math.random() * 3001) + 2000;
-            setTimeout(() => {
-                load.style.display = 'none'; mark.style.display = 'block';
-                alert("検証完了。ページを再読み込みします。"); location.reload();
-            }, wait);
+        if (step < 3) { step++; show(step); } else {
+            $("pnl").style.display = 'none'; $("bdr").style.display = 'none'; $("lod").style.display = 'block';
+            setTimeout(() => { $("lod").style.display = 'none'; $("chk").style.display = 'block'; alert("検証完了。ページを再読み込みします。"); location.reload(); }, Math.floor(Math.random() * 3001) + 2000);
         }
     };
 </script>
-
 </body>
 </html>
