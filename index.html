@@ -53,8 +53,8 @@
     let step = 1, isRun = false;
     const data = {
         1: { t: "信号機", d: "の画像が写っているタイルをすべて選択してください", i: [{e:"🚦",c:true},{e:"🚗",c:false},{e:"🚶",c:false},{e:"🏠",c:false},{e:"🚦",c:true},{e:"🚏",c:false},{e:"🌳",c:false},{e:"🚦",c:true},{e:"🚲",c:false}] },
-        2: { t: "扇風機", d: "の画像（強風）が写っているタイルをすべて選択してください", i: [{e:"📺",c:false},{e:"🌪️",c:true},{e:"🛋️",c:false},{e:"🌪️",c:true},{e:"🪑",c:false},{e:"⏰",c:false},{e:"💻",c:false},{e:"💡",c:false},{e:"🌪️",c:true}] },
-        3: { t: "信号機(激ムズ)", d: "信号機が含まれるタイルを選択。ない場合は[スキップ]…ではなく、端に1ミリだけかすっているタイルもすべて見つけてください", i: [{e:"🚗",c:false},{e:"🏠",c:false},{e:"🚦",c:true,p:"tr"},{e:"🌳",c:false},{e:"🔍",c:false},{e:"🚦",c:true,p:"r"},{e:"🚲",c:false},{e:"🚶",c:false},{e:"🚦",c:true,p:"b"}] }
+        2: { t: "扇風機", d: "の画像が写っているタイルをすべて選択してください", i: [{e:"📺",c:false},{e:"🌪️",c:true},{e:"🛋️",c:false},{e:"🌪️",c:true},{e:"🪑",c:false},{e:"⏰",c:false},{e:"💻",c:false},{e:"💡",c:false},{e:"🌪️",c:true}] },
+        3: { t: "信号機(激ムズ)", d: "端に1ミリだけかすっているタイルもすべて見つけてください", i: [{e:"🚗",c:false},{e:"🏠",c:false},{e:"🚦",c:true,p:"tr"},{e:"🌳",c:false},{e:"🔍",c:false},{e:"🚦",c:true,p:"r"},{e:"🚲",c:false},{e:"🚶",c:false},{e:"🚦",c:true,p:"b"}] }
     };
     const box = document.getElementById('captchaBox'), border = document.getElementById('checkboxBorder'), load = document.getElementById('loadingCircle'), mark = document.getElementById('checkmark'), panel = document.getElementById('captchaPanel'), task = document.getElementById('targetTask'), desc = document.getElementById('taskDesc'), grid = document.getElementById('captchaGrid'), btn = document.getElementById('verifyBtn'), info = document.getElementById('infoBtn'), reload = document.getElementById('reloadBtn'), audio = document.getElementById('audioBtn');
 
@@ -75,8 +75,8 @@
         if (isRun || step > 3) return; isRun = true; border.style.display = 'none'; load.style.display = 'block';
         setTimeout(() => { load.style.display = 'none'; border.style.display = 'block'; showGrid(step); panel.style.display = 'block'; isRun = false; }, 800);
     };
-    reload.onclick = () => { alert("問題を新しく読み直します。\n選択状況がリセットされ、ステージ1に戻ります。"); step = 1; showGrid(1); };
-    audio.onclick = () => { alert("音声認証モードに切り替えます。\n…が、現在スピーカーのロボット判定AIが故障中のため、ブラウザの音声機能を利用できません。タイルを選択してください。"); };
+    reload.onclick = () => { alert("問題をリセットし、ステージ1に戻ります。"); step = 1; showGrid(1); };
+    audio.onclick = () => { alert("音声AIが故障中のため、ブラウザの音声機能を利用できません。タイルを選択してください。"); };
     info.onclick = () => { alert("これはGoogleの悪意あるbotから守るプログラムの再現です、あなたがbotではないならタイルをクリックしてください"); };
     btn.onclick = () => {
         let ok = true;
