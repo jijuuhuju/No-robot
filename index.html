@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>reCAPTCHA</title>
+    <title>reCAPTCHA 再現</title>
     <style>
         body { font-family: Roboto, sans-serif; background: #f0f0f0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; user-select: none; }
         .rc-anchor { background: #f9f9f9; border: 1px solid #d3d3d3; border-radius: 3px; box-shadow: 0 0 4px rgba(0,0,0,0.08); width: 302px; height: 76px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; box-sizing: border-box; position: relative; }
@@ -53,7 +53,7 @@
     const data = {
         1: { t: "信号機", d: "の画像が写っているタイルをすべて選択してください", i: [{e:"🚦",c:true},{e:"🚗",c:false},{e:"🚶",c:false},{e:"🏠",c:false},{e:"🚦",c:true},{e:"🚏",c:false},{e:"🌳",c:false},{e:"🚦",c:true},{e:"🚲",c:false}] },
         2: { t: "扇風機", d: "の画像（強風）が写っているタイルをすべて選択してください", i: [{e:"📺",c:false},{e:"🌪️",c:true},{e:"🛋️",c:false},{e:"🌪️",c:true},{e:"🪑",c:false},{e:"⏰",c:false},{e:"💻",c:false},{e:"💡",c:false},{e:"🌪️",c:true}] },
-        3: { t: "信号機(激ムズ)", d: "信号機が含まれるタイルを選択。ない場合は[スキップ]…ではなく、端に1ミリだけかすっているタイルもすべて見つけてください", i: [{e:"🚗",c:false},{e:"🏠",c:false},{e:"🚦",c:true},{e:"🌳",c:false},{e:"🔍",c:false},{e:"   🚦",c:true},{e:"🚲",c:false},{e:"🚶",c:false},{e:"🚦\n\n\n",c:true}] }
+        3: { t: "信号機(激ムズ)", d: "信号機が含まれるタイルを選択。ない場合は[スキップ]…ではなく、端に1ミリだけかすっているタイルもすべて見つけてください", i: [{e:"🚗",c:false},{e:"🏠",c:false},{e:"🚦",c:true,p:"tr"},{e:"🌳",c:false},{e:"🔍",c:false},{e:"🚦",c:true,p:"r"},{e:"🚲",c:false},{e:"🚶",c:false},{e:"🚦",c:true,p:"b"}] }
     };
     const box = document.getElementById('captchaBox'), border = document.getElementById('checkboxBorder'), load = document.getElementById('loadingCircle'), mark = document.getElementById('checkmark'), panel = document.getElementById('captchaPanel'), task = document.getElementById('targetTask'), desc = document.getElementById('taskDesc'), grid = document.getElementById('captchaGrid'), btn = document.getElementById('verifyBtn');
 
@@ -61,12 +61,13 @@
         grid.innerHTML = ""; task.textContent = data[s].t; desc.textContent = data[s].d;
         data[s].i.forEach(item => {
             const div = document.createElement('div'); div.className = 'captcha-item'; div.setAttribute('data-c', item.c);
-            if(s===3 && item.e.includes("🚦")) {
+            if(s===3 && item.c) {
                 div.style.fontSize = "16px";
-                div.style.justifyContent = item.e.includes("   ") ? "flex-end" : (item.e.includes("\n") ? "flex-end" : "center");
-                div.style.alignItems = item.e.includes("\n") ? "flex-end" : "center";
+                if(item.p==="tr") { div.style.justifyContent = "flex-end"; div.style.alignItems = "flex-start"; }
+                if(item.p==="r") { div.style.justifyContent = "flex-end"; div.style.alignItems = "center"; }
+                if(item.p==="b") { div.style.justifyContent = "center"; div.style.alignItems = "flex-end"; }
             }
-            div.textContent = item.e.trim(); div.onclick = () => div.classList.toggle('selected'); grid.appendChild(div);
+            div.textContent = item.e; div.onclick = () => div.classList.toggle('selected'); grid.appendChild(div);
         });
     }
     box.onclick = () => {
