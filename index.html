@@ -79,7 +79,7 @@
         document.querySelectorAll('.captcha-item').forEach(item => {
             if (item.classList.contains('selected') !== (item.getAttribute('data-c') === 'true')) ok = false;
         });
-        if (!ok) { alert("最初からやり過します。"); location.reload(); return; }
+        if (!ok) { alert("間違っています"); location.reload(); return; }
         if (step < 3) { step++; showGrid(step); } 
         else {
             panel.style.display = 'none'; border.style.display = 'none'; load.style.display = 'block';
